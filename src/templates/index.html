@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>
+    Доступные машины
+</h2>
+<br>
+{% if containers %}
+    {% for container in containers %}
+        <ul class="list-group">
+            <div class="list-group" style="margin: 2px;">
+                <a href="/container/{{container.name}}" class="list-group-item list-group-item-action">
+                  <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-1">{{container.name}}</h5>
+                    <small class="text-muted">{{container.status}}</small>
+                  </div>
+                  <p class="mb-1">{{container.architecture}}</p>
+                  <p class="mb-1">{{container.description}}</p>
+                  <small class="text-muted">Подробности</small>
+                </a>
+              </div>
+        </ul>
+    {% endfor %}
+{% else %}
+    <h3>Ничего не найдено</h3>
+{% endif %}
+
+{% endblock %}

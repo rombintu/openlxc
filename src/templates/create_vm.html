@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <div class="alert alert-danger" role="alert">
+            {{ messages[0] }}
+        </div>
+{% endif %}
+{% endwith %}
+<form action="/create_vm" method="POST" enctype="multipart/form-data">
+    <h2>Из локального образа</h2>
+    <br>
+    
+    <div class="input-group mb-3">
+        <input type="text" class="form-control" name="name" placeholder="Название" aria-describedby="basic-addon2">
+        <input type="text" class="form-control" name="distr" placeholder="Имя образа" aria-describedby="basic-addon2">
+    </div>
+        
+    <button class="btn btn-outline-secondary" type="submit" id="inputGroupFileAddon04" style="margin-top: 5px;">Создать</button>
+    
+</form>
+<br>
+<br>
+
+{%if images%}
+    <h3>Локальные образы</h3>
+    <br>
+    <table class="table table-default table-hover">
+        <tr>
+            <td>Дистрибутив</td>
+            <td>Архитектура</td>
+            <td>Версия</td>
+            <td>Имя</td>
+        </tr>
+    {%for image in images%}
+        <tr>
+            <td>{{image.properties['os']}}</td>
+            <td>{{image.properties['architecture']}}</td>
+            <td>{{image.properties['release']}}</td>
+            <td>{{image.aliases[0]['name']}}</td>
+        </tr>
+    {%endfor%}
+    </table>
+{%endif%}
+
+<!-- <form action="/create_vm" method="POST" enctype="multipart/form-data">
+    <h2>Из локального образа</h2>
+    <br>
+    
+    <div class="input-group mb-3">
+        <input type="text" class="form-control" name="name" placeholder="Название" aria-describedby="basic-addon2">
+        <input type="text" class="form-control" name="desc" placeholder="Описание" aria-describedby="basic-addon2" style="width: 60%;">
+    </div>
+    <div class="input-group mb-3">
+        <input type="text" class="form-control" name="distr" placeholder="Дистрибутив" aria-describedby="basic-addon2">
+        <input type="text" class="form-control" name="arch" placeholder="Архитектура"  aria-describedby="basic-addon2">
+        <input type="text" class="form-control" name="version" placeholder="Версия"  aria-describedby="basic-addon2">
+    </div>
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" value="public" id="flexCheckDefault" name="public">
+        <label class="form-check-label" for="flexCheckDefault">
+          Публичный
+        </label>
+    </div>
+    
+    <button class="btn btn-outline-secondary" type="submit" id="inputGroupFileAddon04" style="margin-top: 5px;">Создать</button>
+    
+</form> -->
+
+{% endblock %}

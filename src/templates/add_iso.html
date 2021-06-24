@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+
+<form action="/add_iso" method="POST" enctype="multipart/form-data">
+        <h2>Добавить свой образ (В разработке)</h2>
+        <br>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="alert alert-primary" role="alert">
+                {{ messages[0] }}
+            </div>
+        {% endif %}
+        {% endwith %}
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" name="title" placeholder="Название" aria-describedby="basic-addon2">
+            <input type="text" class="form-control" name="desc" placeholder="Описание" aria-describedby="basic-addon2" style="width: 60%;">
+        </div>
+        <div style="display: flex; justify-content: space-between;">
+            <input type="file" style="margin-top: 5px;" class="form-control" name="mainfile" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04" aria-label="Upload">
+            <button class="btn btn-outline-secondary" type="submit" id="inputGroupFileAddon04" style="margin-top: 5px;">Загрузить</button>
+        </div>
+</form>
+
+{% endblock %}

@@ -8,7 +8,6 @@ from flask import Flask, render_template, request, redirect, flash, url_for
 from .config import DATABASE
 from pylxd import Client
 
-import json
 import os
 
 app = Flask(__name__)
@@ -49,15 +48,15 @@ def add_iso():
             return redirect(url_for('add_iso'))
     return render_template('add_iso.html')
 
-@app.route('/create_vm', methods=['POST', 'GET'])
-def create_vm():
+@app.route('/create_vm_local', methods=['POST', 'GET'])
+def create_vm_local():
     if request.method == 'POST':
         name = request.form['name']
         iso = request.form['iso']
 
         if name == '' or iso == '':
             flash('Поля должны быть заполнены')
-            return redirect(url_for('create_vm'))
+            return redirect(url_for('create_vm_local'))
 
         try:
             config = {
@@ -67,9 +66,16 @@ def create_vm():
             client.instances.create(config, wait=True)
         except Exception as e:
             flash(str(e))
-            return redirect(url_for('create_vm'))
+            return redirect(url_for('create_vm_local'))
 
         return redirect(url_for('index'))
     client = Client()
     images = client.images.all()
-    return render_template('create_vm.html', images=images)
+    return render_template('create_vm_local.html', images=images)
+
+@app.route('/create_vm_url', methods=['POST', 'GET'])
+def create_vm_url():
+    if request.method == 'POST':
+        pass
+    
+    return render_template('create_vm_url.html')

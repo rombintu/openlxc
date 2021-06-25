@@ -2,18 +2,19 @@
 
 {% block content %}
 <h2>Контейнер: {{container.name}}</h2>
+<br>
+<div class="btn-group" role="group" aria-label="Basic outlined example">
+    <button type="button" class="btn btn-outline-primary">Остановить</button>
+    <button type="button" class="btn btn-outline-primary">Перезагрузить</button>
+    <button type="button" class="btn btn-outline-primary">Запустить</button>
+  </div>
 <ul></ul>
     {% for atr in container %}
     <li>
         {{atr}}
     </li>
     {%endfor%}
-    <div style="display: flex; justify-content: space-between; align-items: center; margin: 20px;">
-        <form action="/container/{{container.name}}" method="POST" enctype="multipart/form-data">
-            <input type="submit" class="btn btn-outline-secondary" value="Запустить" id="{{container.name}}">
-            <input value="{{container.name}}" type="hidden" name="name">
-        </form>
-    </div>
+    
 </ul>
 
 {% endblock %}

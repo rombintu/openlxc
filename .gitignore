@@ -2,3 +2,4 @@
 db.sqlite
 venv
 __pycache__
+hypinfo.json

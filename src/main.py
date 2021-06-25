@@ -8,7 +8,7 @@ from .models import Hypervisor
 # from .config import DATABASE
 from pylxd import Client
 
-import platform
+import json
 import os
 
 app = Flask(__name__)
@@ -21,14 +21,25 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # @login_required
 @app.route('/')
 def index():
-    uname = platform.uname()
+    try:
+        with open('hypinfo.json', 'r') as f:
+            uname = json.loads(f.read())
+    except:
+        uname = {
+            "system": "None",
+            "node": "None",
+            "release": "None",
+            "version": "None",
+            "machine": "None",
+            "processor": "None"
+        }
     hypervisor = Hypervisor(
-        uname.system,
-        uname.node,
-        uname.release,
-        uname.version,
-        uname.machine,
-        uname.processor
+        uname['system'],
+        uname['node'],
+        uname['release'],
+        uname['version'],
+        uname['machine'],
+        uname['processor']
         )
     client = Client()
     containers = client.containers.all()

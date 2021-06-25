@@ -38,7 +38,11 @@
             <td>{{image.properties['os']}}</td>
             <td>{{image.properties['architecture']}}</td>
             <td>{{image.properties['release']}}</td>
-            <td>{{image.aliases[0]['name']}}</td>
+            {%if image.aliases[0]%}
+                <td>{{image.aliases[0]['name']}}</td>
+            {%else%}
+                <td>None</td>
+            {%endif%}
         </tr>
     {%endfor%}
     </table>

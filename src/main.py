@@ -63,7 +63,8 @@ def create_vm_local():
                 'name': name, 
                 'source': {'type': 'image', 'alias': iso}}
             client = Client()
-            client.instances.create(config, wait=True)
+            instance = client.instances.create(config, wait=True)
+            instance.start()
         except Exception as e:
             flash(str(e))
             return redirect(url_for('create_vm_local'))

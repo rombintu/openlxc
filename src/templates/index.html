@@ -24,5 +24,34 @@
 {% else %}
     <h3>Ничего не найдено</h3>
 {% endif %}
-
+<br>
+<h3>Гипервизор</h3>
+<table class="table table-default table-hover">
+  <tr>
+      <td>Компонент</td>
+      <td>Описание</td>
+  </tr>
+  <tr>
+    <td>Система</td>
+    <td>{{hypervisor.system}}</td>
+  </tr>
+  <tr>
+    <td>ОС</td>
+    <td>{{hypervisor.node}}</td>
+  </tr>
+  <tr>
+    <td>Версия</td>
+    <td>{{hypervisor.release}}</td>
+  </tr>
+  <tr>
+    <td>Архитектура</td>
+    <td>{{hypervisor.machine}}</td>
+  </tr>
+  <tr>
+    <td>Процессор</td>
+    <td>{{hypervisor.processor}}</td>
+  </tr>
+</table>
+<br>
+<br>
 {% endblock %}

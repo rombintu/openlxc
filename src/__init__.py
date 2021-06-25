@@ -1,9 +1,9 @@
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
+# from flask_sqlalchemy import SQLAlchemy
 # from flask_login import LoginManager
-from .config import DATABASE
+# from .config import DATABASE
 
-from sqlalchemy import create_engine
+# from sqlalchemy import create_engine
 # from sqlalchemy.orm import sessionmaker
 
 
@@ -13,7 +13,7 @@ def create_app():
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     # следующие две строчки для свича бд, если нужна postgres, расскомментить
     # app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://test:password@localhost:5432/gamix"
-    app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE
+    # app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE
     
 
 

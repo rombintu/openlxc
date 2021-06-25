@@ -1,28 +1,38 @@
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+# from sqlalchemy import create_engine
+# from sqlalchemy.orm import sessionmaker
 
-from flask import Flask, render_template, request, redirect, flash, url_for
+from flask  import Flask, render_template, request, redirect, flash, url_for
 # from flask_login import login_required, current_user
 
-# from .models import Templates
-from .config import DATABASE
+from .models import Hypervisor
+# from .config import DATABASE
 from pylxd import Client
 
+import platform
 import os
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret123'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE
+# app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE
 
 # main = Blueprint('main', __name__)
 
 # @login_required
 @app.route('/')
 def index():
+    uname = platform.uname()
+    hypervisor = Hypervisor(
+        uname.system,
+        uname.node,
+        uname.release,
+        uname.version,
+        uname.machine,
+        uname.processor
+        )
     client = Client()
     containers = client.containers.all()
-    return render_template('index.html', containers=containers)
+    return render_template('index.html', containers=containers, hypervisor=hypervisor)
 
 @app.route('/container/<name>', methods=['POST', 'GET'])
 def container(name):
@@ -80,3 +90,4 @@ def create_vm_url():
         pass
     
     return render_template('create_vm_url.html')
+

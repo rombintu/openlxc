@@ -4,3 +4,4 @@ venv
 __pycache__
 hypinfo.json
 log.txt
+uploads

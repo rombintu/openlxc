@@ -1,6 +1,8 @@
-DATABASE = 'sqlite:///db.sqlite'
 import platform
 import json
+import os
+
+from pathlib import Path
 
 def createconf():
     uname = platform.uname()
@@ -17,5 +19,10 @@ def createconf():
 
         f.write(content)
 
+def createUploadFolder():
+    folder = os.getenv("UPLOAD_FOLDER")
+    Path(folder or "uploads").mkdir(parents=True, exist_ok=True)
+
 if __name__ == '__main__':
     createconf()
+    createUploadFolder()

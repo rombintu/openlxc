@@ -75,7 +75,7 @@ def container(name):
         container.start()
         return redirect(url_for('index'))
     return render_template('container.html', container=container)
-
+    
 @app.route('/container/<name>/stop', methods=['POST'])
 def container_stop(name):
     # client = Client()

@@ -13,8 +13,8 @@
     <br>
     
     <div class="input-group mb-3">
-        <input type="text" class="form-control" name="name" placeholder="Название" aria-describedby="basic-addon2">
-        <input type="text" class="form-control" name="iso" placeholder="Имя образа" aria-describedby="basic-addon2">
+        <input type="text" class="form-control" name="iso" placeholder="alias образа в lxd" aria-describedby="basic-addon2">
+        <input type="text" class="form-control" name="name" placeholder="Название нового контейнера" aria-describedby="basic-addon2">
     </div>
         
     <button class="btn btn-outline-secondary" type="submit" id="inputGroupFileAddon04" style="margin-top: 5px;">Создать</button>
@@ -31,7 +31,7 @@
             <td>Дистрибутив</td>
             <td>Архитектура</td>
             <td>Версия</td>
-            <td>Имя</td>
+            <td>Alias</td>
         </tr>
     {%for image in images%}
         <tr>

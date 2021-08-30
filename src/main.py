@@ -3,6 +3,7 @@
 
 from flask  import Flask, render_template, request, redirect, flash, url_for
 # from flask_login import login_required, current_user
+from werkzeug.utils import secure_filename
 
 from .models import Hypervisor
 # from .config import DATABASE
@@ -14,17 +15,22 @@ import os
 
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'secret123'
+app.config['SECRET_KEY'] = os.getenv("SECRET_KEY")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['UPLOAD_FOLDER'] = os.getenv("UPLOAD_FOLDER")
 # app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE
 
 # main = Blueprint('main', __name__)
 
 
-client = Client(endpoint=os.getenv("SERVERLXD"),
-                cert=(os.getenv("CERTPATH"), os.getenv("KEYPATH")))
-client.authenticate(os.getenv("SERVERSEC"))
+# client = Client(endpoint=os.getenv("SERVERLXD"),
+#                 cert=(os.getenv("CERTPATH"), os.getenv("KEYPATH")))
+# client.authenticate(os.getenv("SERVERSEC"))
 # client.trusted
+client = Client()
+
+ALLOWED_EXTENSIONS = {'tar.gz'}
+
 
 # @login_required
 @app.route('/')
@@ -50,15 +56,15 @@ def index():
         uname['processor']
         )
 
-    containers = []
+    # containers = []
 
-    try:
+    # try:
         # client = Client(endpoint=SERVERLXD)
         # client.authenticate(SERVERSEC)
         # client.trusted
-        containers = client.instances.all()
-    except Exception as e:
-        print(e)
+    containers = client.containers.all()
+    # except Exception as e:
+    #     print(e)
     return render_template('index.html', containers=containers, hypervisor=hypervisor) 
 
 @app.route('/container/<name>', methods=['POST', 'GET'])
@@ -70,11 +76,51 @@ def container(name):
         return redirect(url_for('index'))
     return render_template('container.html', container=container)
 
-@app.route('/upload/iso')
-def add_iso():
+@app.route('/container/<name>/stop', methods=['POST'])
+def container_stop(name):
+    # client = Client()
+    container = client.containers.get(name)
     if request.method == 'POST':
-        name = request.form['name']
+        container.stop()
+        return redirect(url_for('index'))
+    return render_template('container.html', container=container)
+
+@app.route('/container/<name>/start', methods=['POST'])
+def container_start(name):
+    # client = Client()
+    container = client.containers.get(name)
+    if request.method == 'POST':
+        container.start()
+        return redirect(url_for('index'))
+    return render_template('container.html', container=container)
+
+@app.route('/container/<name>/reboot', methods=['POST'])
+def container_restart(name):
+    # client = Client()
+    container = client.containers.get(name)
+    if request.method == 'POST':
+        container.restart()
+        return redirect(url_for('index'))
+    return render_template('container.html', container=container)
+
+@app.route('/container/<name>/freeze', methods=['POST'])
+def container_freeze(name):
+    # client = Client()
+    container = client.containers.get(name)
+    if request.method == 'POST':
+        container.freeze()
+        return redirect(url_for('index'))
+    return render_template('container.html', container=container)
+
+def allowed_file(filename):
+    return 'tar' in filename.split(".")
+
+@app.route('/upload/iso', methods=['POST', 'GET'])
+def upload_iso():
+    if request.method == 'POST':
+        name = request.form['title']
         desc = request.form['desc']
+        data = request.files['mainfile']
         # distr = request.form['distr']
         # arch = request.form['arch']
         # version = request.form['version']
@@ -83,28 +129,45 @@ def add_iso():
         if name == '':
             flash('Поля должны быть заполнены')
             return redirect(url_for('upload_iso'))
-    return render_template('create_vm.html')
+        elif data.filename == '':
+            flash('Файл не выбран')
+            return redirect(url_for('upload_iso'))
+
+        if data and allowed_file(data.filename):
+            upload_folder = os.getenv("UPLOAD_FOLDER")
+            filename = secure_filename(data.filename)
+            file_path = os.path.join(upload_folder, filename)
+            print(filename)
+            data.save(file_path)
+            image_data = open(file_path, 'rb').read()
+            client.images.create(image_data, public=True, wait=True)
+        else:
+            flash(f'Файл не подходит: {ALLOWED_EXTENSIONS}')
+            return redirect(url_for('upload_iso'))
+        return redirect(url_for('index'))
+
+    return render_template('upload_iso.html')
 
 @app.route('/create/vm', methods=['POST', 'GET'])
-def create_vm_local():
+def create_vm():
     if request.method == 'POST':
         name = request.form['name']
         iso = request.form['iso']
 
         if name == '' or iso == '':
             flash('Поля должны быть заполнены')
-            return redirect(url_for('create_vm_local'))
+            return redirect(url_for('create_vm'))
 
         try:
             config = {
                 'name': name, 
                 'source': {'type': 'image', 'alias': iso}}
             # client = Client()
-            instance = client.instances.create(config, wait=True)
+            instance = client.containers.create(config, wait=False)
             instance.start()
         except Exception as e:
             flash(str(e))
-            return redirect(url_for('create/vm'))
+            return redirect(url_for('create_vm'))
 
         return redirect(url_for('index'))
     # client = Client()
@@ -112,7 +175,7 @@ def create_vm_local():
     return render_template('create_vm.html', images=images)
 
 @app.route('/download/iso', methods=['POST', 'GET'])
-def create_vm_url():
+def download_iso():
     if request.method == 'POST':
         pass
     

@@ -4,17 +4,30 @@
 <h2>Контейнер: {{container.name}}</h2>
 <br>
 <div class="btn-group" role="group" aria-label="Basic outlined example">
-    <button type="button" class="btn">Остановить</button>
-    <button type="button" class="btn">Перезагрузить</button>
-    <button type="button" class="btn">Запустить</button>
-  </div>
-<ul></ul>
-    {% for atr in container %}
-    <li>
-        {{atr}}
-    </li>
-    {%endfor%}
-    
-</ul>
+  <form action="/container/{{container.name}}/stop" method="post">
+    <button type="submit" style="color: rgb(207, 57, 57);" class="btn">Остановить</button>
+  </form>
+  <form action="/container/{{container.name}}/freeze" method="post">
+    <button type="submit" class="btn">Заморозить</button>
+  </form>
+  <form action="/container/{{container.name}}/restart" method="post">
+    <button type="submit" class="btn">Перезагрузить</button>
+  </form>
+  <form action="/container/{{container.name}}/start" method="post">
+    <button type="submit" class="btn">Запустить</button>
+  </form>
+</div>
+
+<br>
+
+<div style="margin-top: 10px;">
+  <table class="table">
+    {% for key, value in container.config.items() %}
+      <tr>
+        <td>{{key}}</td> <td>{{value}}</td>
+      </tr>
+    {% endfor %}
+  </table>
+</div>
 
 {% endblock %}

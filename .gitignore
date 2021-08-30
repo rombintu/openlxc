@@ -5,3 +5,8 @@ __pycache__
 hypinfo.json
 log.txt
 uploads
+
+# SSL
+*.crt
+*.csr
+*.key

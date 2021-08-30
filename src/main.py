@@ -5,7 +5,7 @@ from flask  import Flask, render_template, request, redirect, flash, url_for
 # from flask_login import login_required, current_user
 from werkzeug.utils import secure_filename
 
-from .models import Hypervisor
+from src import tools 
 # from .config import DATABASE
 from pylxd import Client
 
@@ -22,92 +22,66 @@ app.config['UPLOAD_FOLDER'] = os.getenv("UPLOAD_FOLDER")
 
 # main = Blueprint('main', __name__)
 
-
-# client = Client(endpoint=os.getenv("SERVERLXD"),
-#                 cert=(os.getenv("CERTPATH"), os.getenv("KEYPATH")))
-# client.authenticate(os.getenv("SERVERSEC"))
-# client.trusted
-client = Client()
-
 ALLOWED_EXTENSIONS = {'tar.gz'}
+try:
+    client = Client(
+        endpoint=os.getenv("REMOTE_HOST"), 
+        cert=(os.getenv("CERT_PATH"), os.getenv("KEY_PATH")),
+        verify=os.getenv("VERIFY_SSL"),
+        )
+    client.authenticate(os.getenv("PASSWORD"))
+except Exception as e:
+    print("ERROR:", e)
 
 
 # @login_required
 @app.route('/')
 def index():
+    
+    containers = {}
+    hypervisor = tools.getHypervisor()
     try:
-        with open('hypinfo.json', 'r') as f:
-            uname = json.loads(f.read())
-    except:
-        uname = {
-            "system": "None",
-            "node": "None",
-            "release": "None",
-            "version": "None",
-            "machine": "None",
-            "processor": "None"
-        }
-    hypervisor = Hypervisor(
-        uname['system'],
-        uname['node'],
-        uname['release'],
-        uname['version'],
-        uname['machine'],
-        uname['processor']
-        )
-
-    # containers = []
-
-    # try:
-        # client = Client(endpoint=SERVERLXD)
-        # client.authenticate(SERVERSEC)
-        # client.trusted
-    containers = client.containers.all()
-    # except Exception as e:
-    #     print(e)
+        containers = client.containers.all()
+    except Exception as e:
+        print("ERROR:", e)
     return render_template('index.html', containers=containers, hypervisor=hypervisor) 
 
 @app.route('/container/<name>', methods=['POST', 'GET'])
 def container(name):
-    # client = Client()
-    container = client.containers.get(name)
     if request.method == 'POST':
+        container = client.containers.get(name)
         container.start()
         return redirect(url_for('index'))
     return render_template('container.html', container=container)
     
 @app.route('/container/<name>/stop', methods=['POST'])
 def container_stop(name):
-    # client = Client()
-    container = client.containers.get(name)
     if request.method == 'POST':
+        container = client.containers.get(name)
         container.stop()
         return redirect(url_for('index'))
     return render_template('container.html', container=container)
 
 @app.route('/container/<name>/start', methods=['POST'])
 def container_start(name):
-    # client = Client()
-    container = client.containers.get(name)
     if request.method == 'POST':
+        container = client.containers.get(name)
         container.start()
         return redirect(url_for('index'))
     return render_template('container.html', container=container)
 
 @app.route('/container/<name>/reboot', methods=['POST'])
 def container_restart(name):
-    # client = Client()
-    container = client.containers.get(name)
     if request.method == 'POST':
+        container = client.containers.get(name)
         container.restart()
         return redirect(url_for('index'))
     return render_template('container.html', container=container)
 
 @app.route('/container/<name>/freeze', methods=['POST'])
 def container_freeze(name):
-    # client = Client()
-    container = client.containers.get(name)
     if request.method == 'POST':
+        container = client.containers.get(name)
         container.freeze()
         return redirect(url_for('index'))
     return render_template('container.html', container=container)
@@ -121,11 +95,7 @@ def upload_iso():
         name = request.form['title']
         desc = request.form['desc']
         data = request.files['mainfile']
-        # distr = request.form['distr']
-        # arch = request.form['arch']
-        # version = request.form['version']
-        # public = True if request.form.get('public') else False
-
+        
         if name == '':
             flash('Поля должны быть заполнены')
             return redirect(url_for('upload_iso'))
@@ -162,7 +132,6 @@ def create_vm():
             config = {
                 'name': name, 
                 'source': {'type': 'image', 'alias': iso}}
-            # client = Client()
             instance = client.containers.create(config, wait=False)
             instance.start()
         except Exception as e:
@@ -170,8 +139,12 @@ def create_vm():
             return redirect(url_for('create_vm'))
 
         return redirect(url_for('index'))
-    # client = Client()
-    images = client.images.all()
+    
+    images = {}
+    try:
+        images = client.images.all()
+    except Exception as e:
+        print("ERROR:", e)
     return render_template('create_vm.html', images=images)
 
 @app.route('/download/iso', methods=['POST', 'GET'])

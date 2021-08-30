@@ -9,7 +9,7 @@ from flask import Flask
 
 def create_app():
     app = Flask(__name__)
-    app.config['SECRET_KEY'] = 'secret123'
+    # app.config['SECRET_KEY'] = 'secret123'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     # следующие две строчки для свича бд, если нужна postgres, расскомментить
     # app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://test:password@localhost:5432/gamix"

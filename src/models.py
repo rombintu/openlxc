@@ -71,13 +71,13 @@
 
 class Hypervisor:
     
-    def __init__(self, system, node, release, version, machine, processor):
+    def __init__(self, system, node, release, version, machine):
         self.system = system
         self.node = node
         self.release = release
         self.version = version
         self.machine = machine
-        self.processor = processor
+        # self.processor = processor
 
 
 # class Users(UserMixin, base):

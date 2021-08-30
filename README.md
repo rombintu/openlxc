@@ -1,6 +1,12 @@
 # OpenLXC (Demo)
 
-## Run
+## Pre-install
+### Optional
+```
+openssl req -newkey rsa:2048 -nodes -keyout lxd.key -out lxd.csr
+openssl x509 -signkey lxd.key -in lxd.csr -req -days 365 -out lxd.crt
+```
+### Run
 ```
 git clone https://github.com/rombintu/openlxc.git
 cd openlxc

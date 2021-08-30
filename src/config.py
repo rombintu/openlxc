@@ -14,7 +14,7 @@ def createconf():
                 "release": uname.release,
                 "version": uname.version,
                 "machine": uname.machine,
-                "processor": uname.processor
+                # "processor": uname.processor
             })
 
         f.write(content)
